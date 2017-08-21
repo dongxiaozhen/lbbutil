@@ -5,7 +5,7 @@ import (
 	"os/signal"
 )
 
-func RegistSignal(handle func(), sig ...os.Signal) {
+func AsyncRegistSignal(handle func(), sig ...os.Signal) {
 	c := make(chan os.Signal, len(sig))
 	signal.Notify(c, sig...)
 	go func() {
@@ -18,4 +18,10 @@ func MakeSignal(sig ...os.Signal) chan os.Signal {
 	c := make(chan os.Signal, len(sig))
 	signal.Notify(c, sig...)
 	return c
+}
+func RegistSignal(handle func(), sig ...os.Signal) {
+	c := make(chan os.Signal, len(sig))
+	signal.Notify(c, sig...)
+	<-c
+	handle()
 }
